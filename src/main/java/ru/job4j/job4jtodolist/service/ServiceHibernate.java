@@ -1,8 +1,8 @@
 package ru.job4j.job4jtodolist.service;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import ru.job4j.job4jtodolist.persistence.Item;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class ServiceHibernate implements Service {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceHibernate.class.getName());
@@ -35,26 +36,44 @@ public class ServiceHibernate implements Service {
         return Lazy.INST;
     }
 
+    private <T> T tx(final Function<Session, T> command) {
+        final Session session = sessionFactory.openSession();
+        final Transaction ts = session.beginTransaction();
+        try {
+            T result = command.apply(session);
+            ts.commit();
+            return result;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
+
     @Override
     public Item add(Item item) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.save(item);
-            session.getTransaction().commit();
-        }
-        return item;
+        return tx(
+                session -> {
+                    session.save(item);
+                    return item;
+                }
+        );
     }
 
     @Override
     public boolean update(int id, boolean done) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Item item = session.get(Item.class, id);
-            item.setDone(done);
-            session.update(item);
-            session.getTransaction().commit();
-            return true;
-        } catch (HibernateException e) {
+        try {
+            return tx(
+                    session -> {
+                        Item item = session.get(Item.class, id);
+                        item.setDone(done);
+                        session.update(item);
+                        return true;
+                    }
+            );
+        } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return false;
         }
@@ -62,25 +81,26 @@ public class ServiceHibernate implements Service {
 
     @Override
     public boolean delete(int id) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Item item = new Item();
-            item.setId(id);
-            session.delete(item);
-            session.getTransaction().commit();
-            return true;
-        } catch (HibernateException e) {
-            LOGGER.warn(e.getMessage(), e);
+        try {
+            return tx(
+                    session -> {
+                        Item item = new Item();
+                        item.setId(id);
+                        session.delete(item);
+                        return true;
+                    }
+            );
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
     }
 
     @Override
     public List<Item> getAllTask() {
-        List<Item> result;
-        try (Session session = sessionFactory.openSession()) {
-            result = session.createQuery("from ru.job4j.job4jtodolist.persistence.Item").list();
-        }
-        return result;
+        return tx(
+                session -> session.createQuery("from Item")
+                        .list()
+        );
     }
 }
