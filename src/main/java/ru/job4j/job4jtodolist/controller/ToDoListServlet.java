@@ -1,9 +1,7 @@
 package ru.job4j.job4jtodolist.controller;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import org.json.JSONObject;
 import ru.job4j.job4jtodolist.persistence.Item;
 import ru.job4j.job4jtodolist.service.Service;
 import ru.job4j.job4jtodolist.service.ServiceHibernate;
@@ -25,14 +23,13 @@ public class ToDoListServlet extends HttpServlet {
             throws IOException {
         BufferedReader br = req.getReader();
         String json = br.readLine();
-        JsonElement jsonParser = JsonParser.parseString(json);
-        JsonObject jsonObject = jsonParser.getAsJsonObject();
+        JSONObject jsonObject = new JSONObject(json);
         Service service = ServiceHibernate.instOf();
         String responseJson;
-        switch (jsonObject.get("action").getAsString()) {
+        switch (jsonObject.getString("action")) {
             case "ADD":
-                Item item = service.add(new Item(jsonObject.get("description").getAsString(),
-                        LocalDateTime.now(), jsonObject.get("done").getAsBoolean()));
+                Item item = service.add(new Item(jsonObject.getString("description"),
+                        LocalDateTime.now(), jsonObject.getBoolean("done")));
                 responseJson = new Gson().toJson(item);
                 break;
             case "GET_ALL_TASKS":
@@ -40,19 +37,17 @@ public class ToDoListServlet extends HttpServlet {
                 responseJson = new Gson().toJson(itemList);
                 break;
             case "DELETE":
-                boolean resultDelete = service.delete(jsonObject.get("id").getAsInt());
+                boolean resultDelete = service.delete(jsonObject.getInt("id"));
                 responseJson = new Gson().toJson(resultDelete);
                 break;
             case "CHANGE_DONE":
-                boolean resultUpdate = service.update(jsonObject.get("id").getAsInt(),
-                        jsonObject.get("done").getAsBoolean());
+                boolean resultUpdate = service.update(jsonObject.getInt("id"),
+                        jsonObject.getBoolean("done"));
                 responseJson = new Gson().toJson(resultUpdate);
                 break;
             default:
                 responseJson = "{}";
         }
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
         resp.getWriter().print(responseJson);
         resp.getWriter().flush();
     }

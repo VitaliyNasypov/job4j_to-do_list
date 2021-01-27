@@ -28,7 +28,7 @@
 
 
 Начальная страница. Добавленные задачи можно отмечать выполненными (зачеркиваются). Удалять задачи (крестик справа):
-![](images/todolist.jpg)
+![](images/todolist.png)
 <br><br>
 Возможно скрыть выполненные задачи кнопкой "Done tasks":
-![](images/todolisthide.jpg)
+![](images/todolisthide.png)
