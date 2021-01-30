@@ -11,9 +11,15 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private LocalDateTime created;
+    @Column(nullable = false)
     private boolean done;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Item() {
     }
@@ -39,8 +45,36 @@ public class Item {
         this.id = id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -52,13 +86,12 @@ public class Item {
             return false;
         }
         Item item = (Item) o;
-        return id == item.id && done == item.done
-                && Objects.equals(description, item.description)
-                && Objects.equals(created, item.created);
+        return id == item.id && done == item.done && Objects.equals(description, item.description)
+                && Objects.equals(created, item.created) && Objects.equals(user, item.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, created, done);
+        return Objects.hash(id, description, created, done, user);
     }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>My To Do List</title>
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <script src="js/script.js"></script>
@@ -11,9 +11,15 @@
     <h2>My To Do List</h2>
     <input type="text" id="myInput" placeholder="Title...">
     <span id="add" class="addBtn" onclick="addNewTask()">Add</span>
-    <span id="hide" class="addBtn" onclick="hideTasks()">Done tasks</span>
 </div>
-
-<ul id="myUL" onclick="eventUl(event)"></ul>
+<div id="myFilter" class="myFilter">
+    <span id="filter">Filters:</span>
+    <span id="allTasksFilter" class="filterBtn" onclick="filterTasks(event)">All tasks</span>
+    <span id="doneTasksFilter" class="filterBtn" onclick="filterTasks(event)">Only done tasks</span>
+    <span id="myTasksFilter" class="filterBtn" onclick="filterTasks(event)">Only my tasks</span>
+</div>
+<div id="myTasks">
+    <ul id="myUL" onclick="eventUl(event)"></ul>
+</div>
 </body>
 </html>

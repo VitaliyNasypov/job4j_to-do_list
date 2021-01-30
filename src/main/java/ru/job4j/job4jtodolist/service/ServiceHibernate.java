@@ -9,7 +9,10 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.job4j.job4jtodolist.persistence.Item;
+import ru.job4j.job4jtodolist.persistence.User;
 
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.function.Function;
 
@@ -63,6 +66,23 @@ public class ServiceHibernate implements Service {
     }
 
     @Override
+    public User add(User user) {
+        user.setPassword(new PasswordHash()
+                .generatePasswordHash(user.getPassword(), user.getEmail(),
+                        10000, 512, "PBKDF2WithHmacSHA512"));
+        User finalUser = user;
+        user = tx(
+                session -> {
+                    session.save(finalUser);
+                    return finalUser;
+                }
+        );
+        user.setEmail("");
+        user.setPassword("");
+        return user;
+    }
+
+    @Override
     public boolean update(int id, boolean done) {
         try {
             return tx(
@@ -94,6 +114,43 @@ public class ServiceHibernate implements Service {
             LOGGER.error(e.getMessage(), e);
             return false;
         }
+    }
+
+    @Override
+    public boolean isUserCreated(User user) {
+        try {
+            tx(
+                    session -> {
+                        Query query = session.createQuery("from User where email = :email");
+                        query.setParameter("email", user.getEmail());
+                        return query.getSingleResult();
+                    });
+            return true;
+        } catch (NoResultException e) {
+            LOGGER.info(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    @Override
+    public User findUser(User user) {
+        try {
+            User userResult = (User) tx(
+                    session -> {
+                        Query query = session.createQuery("from User where email = :email");
+                        query.setParameter("email", user.getEmail());
+                        return query.getSingleResult();
+                    });
+            if (new PasswordHash().validatePassword(user.getPassword(),
+                    userResult.getPassword())) {
+                userResult.setPassword("");
+                userResult.setEmail("");
+                return userResult;
+            }
+        } catch (NoResultException e) {
+            LOGGER.info(e.getMessage(), e);
+        }
+        return new User();
     }
 
     @Override

@@ -3,6 +3,7 @@ package ru.job4j.job4jtodolist.controller;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 import ru.job4j.job4jtodolist.persistence.Item;
+import ru.job4j.job4jtodolist.persistence.User;
 import ru.job4j.job4jtodolist.service.Service;
 import ru.job4j.job4jtodolist.service.ServiceHibernate;
 
@@ -10,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,10 +28,16 @@ public class ToDoListServlet extends HttpServlet {
         JSONObject jsonObject = new JSONObject(json);
         Service service = ServiceHibernate.instOf();
         String responseJson;
+        HttpSession httpSession = req.getSession();
+        User user = (User) httpSession.getAttribute("user");
         switch (jsonObject.getString("action")) {
             case "ADD":
-                Item item = service.add(new Item(jsonObject.getString("description"),
-                        LocalDateTime.now(), jsonObject.getBoolean("done")));
+                Item item = new Item();
+                item.setDescription(jsonObject.getString("description"));
+                item.setCreated(LocalDateTime.now());
+                item.setDone(jsonObject.getBoolean("done"));
+                item.setUser(user);
+                item = service.add(item);
                 responseJson = new Gson().toJson(item);
                 break;
             case "GET_ALL_TASKS":
@@ -44,6 +52,9 @@ public class ToDoListServlet extends HttpServlet {
                 boolean resultUpdate = service.update(jsonObject.getInt("id"),
                         jsonObject.getBoolean("done"));
                 responseJson = new Gson().toJson(resultUpdate);
+                break;
+            case "USER":
+                responseJson = new Gson().toJson(user);
                 break;
             default:
                 responseJson = "{}";

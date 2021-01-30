@@ -1,6 +1,7 @@
 package ru.job4j.job4jtodolist.service;
 
 import ru.job4j.job4jtodolist.persistence.Item;
+import ru.job4j.job4jtodolist.persistence.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,5 +49,20 @@ public class ServiceMock implements Service {
     @Override
     public List<Item> getAllTask() {
         return new ArrayList<>(items.values());
+    }
+
+    @Override
+    public User add(User user) {
+        return null;
+    }
+
+    @Override
+    public boolean isUserCreated(User user) {
+        return false;
+    }
+
+    @Override
+    public User findUser(User user) {
+        return null;
     }
 }
