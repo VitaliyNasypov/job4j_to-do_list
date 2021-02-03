@@ -4,18 +4,15 @@ body {
     min-width: 250px;
 }
 
-/* Include the padding and border in an element's total width and height */
 * {
     box-sizing: border-box;
 }
 
-/*!* Remove margins and padding from the list *!*/
 ul {
     margin: 2.6% 0 0 0;
     padding: 0;
 }
 
-/* Style the list items */
 ul li {
     cursor: pointer;
     position: relative;
@@ -24,32 +21,26 @@ ul li {
     background: #eeeeee;
     font-size: 18px;
     transition: 0.2s;
-
-    /* make the list items unselectable */
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-/* Set all odd list items to a different color (zebra-stripes) */
 ul li:nth-child(odd) {
     background: #f9f9f9;
 }
 
-/* Darker background-color on hover */
 ul li:hover {
     background: #ddd;
 }
 
-/* When clicked on, add a background color and strike out text */
 ul li.checked {
     background: #888;
     color: #fff;
     text-decoration: line-through;
 }
 
-/* Add a "checked" mark when clicked on */
 ul li.checked::before {
     content: '';
     position: absolute;
@@ -63,7 +54,6 @@ ul li.checked::before {
     width: 7px;
 }
 
-/* Style the close button */
 .close {
     position: absolute;
     right: 0;
@@ -76,7 +66,6 @@ ul li.checked::before {
     color: white;
 }
 
-/* Style the header */
 .header {
     background-color: #4CAF50;
     padding: 30px 40px;
@@ -84,14 +73,12 @@ ul li.checked::before {
     text-align: center;
 }
 
-/* Clear floats after the header */
 .header:after {
     content: "";
     display: table;
     clear: both;
 }
 
-/* Style the input */
 #myInput {
     margin: 0;
     border: none;
@@ -102,7 +89,6 @@ ul li.checked::before {
     font-size: 16px;
 }
 
-/* Style the "Add" button */
 .addBtn {
     padding: 10px;
     width: 20%;
@@ -127,7 +113,6 @@ ul li.checked::before {
     left: 44%;
 }
 
-/* Full-width input fields */
 input[type=email], input[type=password], input[type=text] {
     width: 100%;
     padding: 15px;
@@ -137,13 +122,11 @@ input[type=email], input[type=password], input[type=text] {
     background: #f1f1f1;
 }
 
-/* Add a background color when the inputs get focus */
 input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
     background-color: #ddd;
     outline: none;
 }
 
-/* Set a style for all buttons */
 button {
     background-color: #4CAF50;
     color: white;
@@ -159,52 +142,40 @@ button:hover {
     opacity: 1;
 }
 
-/* Extra styles for the cancel button */
 .cancelbtn {
     padding: 14px 20px;
     background-color: #f44336;
 }
 
-/* Float cancel and signup buttons and add an equal width */
 .cancelbtn, .signupbtn {
     float: left;
     width: 100%;
 }
 
-/* Add padding to container elements */
 .container {
     padding: 16px;
 }
 
-/* The Modal (background) */
 .modal {
-    /*display: block; !* Hidden by default *!*/
-    /*position: fixed; !* Stay in place *!*/
-    /*z-index: 1; !* Sit on top *!*/
-    /*left: 0;*/
     top: 10%;
-    width: 80%; /* Full width */
-    height: 80%; /* Full height */
-    /*overflow: auto; !* Enable scroll if needed *!*/
+    width: 80%;
+    height: 80%;
     padding-top: 50px;
     backdrop-filter: blur(5px);
 }
 
-/* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    margin: 5% auto 15% auto;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 80%;
 }
 
-/* Style the horizontal ruler */
 hr {
     border: 1px solid #f1f1f1;
     margin-bottom: 25px;
 }
 
-/* Clear floats */
 .clearfix::after {
     content: "";
     clear: both;

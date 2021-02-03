@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>My To Do List</title>
@@ -11,11 +11,13 @@
     <h2>My To Do List</h2>
     <input type="text" id="myInput" placeholder="Title...">
     <span id="add" class="addBtn" onclick="addNewTask()">Add</span>
+    <br><br><br>
+    <div id="checkbox"></div>
 </div>
 <div id="myFilter" class="myFilter">
     <span id="filter">Filters:</span>
     <span id="allTasksFilter" class="filterBtn" onclick="filterTasks(event)">All tasks</span>
-    <span id="doneTasksFilter" class="filterBtn" onclick="filterTasks(event)">Only done tasks</span>
+    <span id="activeTasksFilter" class="filterBtn" onclick="filterTasks(event)">Only active tasks</span>
     <span id="myTasksFilter" class="filterBtn" onclick="filterTasks(event)">Only my tasks</span>
 </div>
 <div id="myTasks">

@@ -1,7 +1,9 @@
 package ru.job4j.job4jtodolist.controller;
 
 import com.google.gson.Gson;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import ru.job4j.job4jtodolist.persistence.Category;
 import ru.job4j.job4jtodolist.persistence.Item;
 import ru.job4j.job4jtodolist.persistence.User;
 import ru.job4j.job4jtodolist.service.Service;
@@ -16,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet("/todolist")
 public class ToDoListServlet extends HttpServlet {
@@ -37,12 +40,25 @@ public class ToDoListServlet extends HttpServlet {
                 item.setCreated(LocalDateTime.now());
                 item.setDone(jsonObject.getBoolean("done"));
                 item.setUser(user);
-                item = service.add(item);
+                JSONArray jsonArray = new JSONArray(jsonObject.getString("checkbox"));
+                int[] idCategories = new int[jsonArray.length()];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    idCategories[i] = jsonArray.getInt(i);
+                }
+                item = service.add(item, idCategories);
                 responseJson = new Gson().toJson(item);
                 break;
             case "GET_ALL_TASKS":
                 List<Item> itemList = service.getAllTask();
+                itemList.forEach(i -> {
+                    i.getUser().setPassword("");
+                    i.getUser().setEmail("");
+                });
                 responseJson = new Gson().toJson(itemList);
+                break;
+            case "GET_ALL_CATEGORIES":
+                Set<Category> categorySet = service.getAllCategories();
+                responseJson = new Gson().toJson(categorySet);
                 break;
             case "DELETE":
                 boolean resultDelete = service.delete(jsonObject.getInt("id"));

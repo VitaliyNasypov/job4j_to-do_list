@@ -8,12 +8,14 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.job4j.job4jtodolist.persistence.Category;
 import ru.job4j.job4jtodolist.persistence.Item;
 import ru.job4j.job4jtodolist.persistence.User;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class ServiceHibernate implements Service {
@@ -56,9 +58,13 @@ public class ServiceHibernate implements Service {
     }
 
     @Override
-    public Item add(Item item) {
+    public Item add(Item item, int[] idCategories) {
         return tx(
                 session -> {
+                    for (int id : idCategories) {
+                        Category category = session.find(Category.class, id);
+                        item.getCategories().add(category);
+                    }
                     session.save(item);
                     return item;
                 }
@@ -87,7 +93,7 @@ public class ServiceHibernate implements Service {
         try {
             return tx(
                     session -> {
-                        Item item = session.get(Item.class, id);
+                        Item item = session.find(Item.class, id);
                         item.setDone(done);
                         session.update(item);
                         return true;
@@ -104,9 +110,9 @@ public class ServiceHibernate implements Service {
         try {
             return tx(
                     session -> {
-                        Item item = new Item();
+                        Item item = session.find(Item.class, id);
                         item.setId(id);
-                        session.delete(item);
+                        session.remove(item);
                         return true;
                     }
             );
@@ -119,12 +125,11 @@ public class ServiceHibernate implements Service {
     @Override
     public boolean isUserCreated(User user) {
         try {
-            tx(
-                    session -> {
-                        Query query = session.createQuery("from User where email = :email");
-                        query.setParameter("email", user.getEmail());
-                        return query.getSingleResult();
-                    });
+            tx(session -> {
+                Query query = session.createQuery("from User where email = :email");
+                query.setParameter("email", user.getEmail());
+                return query.getSingleResult();
+            });
             return true;
         } catch (NoResultException e) {
             LOGGER.info(e.getMessage(), e);
@@ -156,8 +161,14 @@ public class ServiceHibernate implements Service {
     @Override
     public List<Item> getAllTask() {
         return tx(
-                session -> session.createQuery("from Item")
-                        .list()
-        );
+                session -> session.createQuery("select distinct i from Item i "
+                        + "join fetch i.categories").list());
+    }
+
+    @Override
+    public Set<Category> getAllCategories() {
+        return tx(
+                session ->
+                        Set.copyOf(session.createQuery("from Category").list()));
     }
 }

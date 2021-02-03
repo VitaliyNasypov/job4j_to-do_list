@@ -1,5 +1,6 @@
 package ru.job4j.job4jtodolist.service;
 
+import ru.job4j.job4jtodolist.persistence.Category;
 import ru.job4j.job4jtodolist.persistence.Item;
 import ru.job4j.job4jtodolist.persistence.User;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,7 +27,7 @@ public class ServiceMock implements Service {
     }
 
     @Override
-    public Item add(Item item) {
+    public Item add(Item item, int[] idCategories) {
         int id = ITEM_ID.incrementAndGet();
         item.setId(id);
         items.put(id, item);
@@ -63,6 +65,11 @@ public class ServiceMock implements Service {
 
     @Override
     public User findUser(User user) {
+        return null;
+    }
+
+    @Override
+    public Set<Category> getAllCategories() {
         return null;
     }
 }
