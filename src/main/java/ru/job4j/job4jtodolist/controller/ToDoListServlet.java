@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class ToDoListServlet extends HttpServlet {
             case "ADD":
                 Item item = new Item();
                 item.setDescription(jsonObject.getString("description"));
-                item.setCreated(LocalDateTime.now());
+                item.setCreated(new Date(System.currentTimeMillis()));
                 item.setDone(jsonObject.getBoolean("done"));
                 item.setUser(user);
                 JSONArray jsonArray = new JSONArray(jsonObject.getString("checkbox"));

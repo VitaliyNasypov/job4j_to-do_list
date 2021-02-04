@@ -4,11 +4,7 @@ import ru.job4j.job4jtodolist.persistence.Category;
 import ru.job4j.job4jtodolist.persistence.Item;
 import ru.job4j.job4jtodolist.persistence.User;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,8 +14,12 @@ public class ServiceMock implements Service {
     private Map<Integer, Item> items = new ConcurrentHashMap<>();
 
     private ServiceMock() {
-        items.put(1, new Item(1, "Description",
-                LocalDateTime.now(), false));
+        Item item = new Item();
+        item.setId(1);
+        item.setDescription("Description");
+        item.setCreated(new Date(System.currentTimeMillis()));
+        item.setDone(false);
+        items.put(1, item);
     }
 
     public static Service instOf() {

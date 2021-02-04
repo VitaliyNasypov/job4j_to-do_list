@@ -1,7 +1,7 @@
 package ru.job4j.job4jtodolist.persistence;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -16,7 +16,8 @@ public class Item {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
-    private LocalDateTime created;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
     @Column(nullable = false)
     private boolean done;
     @ManyToOne
@@ -26,19 +27,6 @@ public class Item {
     private Set<Category> categories = new HashSet<>();
 
     public Item() {
-    }
-
-    public Item(String description, LocalDateTime created, boolean done) {
-        this.description = description;
-        this.created = created;
-        this.done = done;
-    }
-
-    public Item(int id, String description, LocalDateTime created, boolean done) {
-        this.id = id;
-        this.description = description;
-        this.created = created;
-        this.done = done;
     }
 
     public int getId() {
@@ -57,11 +45,11 @@ public class Item {
         this.description = description;
     }
 
-    public LocalDateTime getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDateTime created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
