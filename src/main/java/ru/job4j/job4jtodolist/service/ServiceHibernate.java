@@ -41,7 +41,7 @@ public class ServiceHibernate implements Service {
         return Lazy.INST;
     }
 
-    private <T> T tx(final Function<Session, T> command) {
+    private <T> T runSession(final Function<Session, T> command) {
         final Session session = sessionFactory.openSession();
         final Transaction ts = session.beginTransaction();
         try {
@@ -59,7 +59,7 @@ public class ServiceHibernate implements Service {
 
     @Override
     public Item add(Item item, int[] idCategories) {
-        return tx(
+        return runSession(
                 session -> {
                     for (int id : idCategories) {
                         Category category = session.find(Category.class, id);
@@ -77,7 +77,7 @@ public class ServiceHibernate implements Service {
                 .generatePasswordHash(user.getPassword(), user.getEmail(),
                         10000, 512, "PBKDF2WithHmacSHA512"));
         User finalUser = user;
-        user = tx(
+        user = runSession(
                 session -> {
                     session.save(finalUser);
                     return finalUser;
@@ -91,7 +91,7 @@ public class ServiceHibernate implements Service {
     @Override
     public boolean update(int id, boolean done) {
         try {
-            return tx(
+            return runSession(
                     session -> {
                         Item item = session.find(Item.class, id);
                         item.setDone(done);
@@ -108,7 +108,7 @@ public class ServiceHibernate implements Service {
     @Override
     public boolean delete(int id) {
         try {
-            return tx(
+            return runSession(
                     session -> {
                         Item item = session.find(Item.class, id);
                         item.setId(id);
@@ -125,7 +125,7 @@ public class ServiceHibernate implements Service {
     @Override
     public boolean isUserCreated(User user) {
         try {
-            tx(session -> {
+            runSession(session -> {
                 Query query = session.createQuery("from User where email = :email");
                 query.setParameter("email", user.getEmail());
                 return query.getSingleResult();
@@ -140,7 +140,7 @@ public class ServiceHibernate implements Service {
     @Override
     public User findUser(User user) {
         try {
-            User userResult = (User) tx(
+            User userResult = (User) runSession(
                     session -> {
                         Query query = session.createQuery("from User where email = :email");
                         query.setParameter("email", user.getEmail());
@@ -160,14 +160,14 @@ public class ServiceHibernate implements Service {
 
     @Override
     public List<Item> getAllTask() {
-        return tx(
+        return runSession(
                 session -> session.createQuery("select distinct i from Item i "
                         + "join fetch i.categories").list());
     }
 
     @Override
     public Set<Category> getAllCategories() {
-        return tx(
+        return runSession(
                 session ->
                         Set.copyOf(session.createQuery("from Category").list()));
     }

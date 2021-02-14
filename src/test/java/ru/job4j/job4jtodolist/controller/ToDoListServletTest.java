@@ -41,8 +41,8 @@ public class ToDoListServletTest {
         User user = new User();
         user.setId(1);
         user.setName("Test");
-        httpSession.setAttribute("user", user);
         Mockito.when(req.getSession()).thenReturn(httpSession);
+        Mockito.when(httpSession.getAttribute("user")).thenReturn(user);
         Mockito.when(req.getReader()).thenReturn(br);
         Mockito.when(br.readLine())
                 .thenReturn("{action: \"ADD\", id: \"\", description: \"Add Task\", "
